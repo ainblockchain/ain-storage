@@ -23,9 +23,6 @@ describe('firebase adapter', () => {
             const options = {
                 textFile : fs.readFileSync(`${__dirname}/firebase/test.txt`),
             }
-
-
-
             client.upload('.', 'test4.txt', options)
 
         })

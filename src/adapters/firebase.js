@@ -1,19 +1,12 @@
 const fs = require('fs')
 const https = require('https')
 const firebase = require('firebase/app')
-//const firebase = require('firebase-admin')
 require('firebase/storage')
-
 global.XMLHttpRequest = require("xhr2");
-
+const path = require('path')
 
 module.exports = config => {
 
-    /* == firebase config ==
-    apiKey, authDomain, databaseURL ,projectId ,storageBucket ,messagingSenderId ,appId ,measurementId ,
-    +
-    appName (ex.'GPT2Firebase')
-    */
     const firebaseConfig = {
         apiKey : config.apiKey,
         authDomain : config.authDomain,
@@ -24,87 +17,56 @@ module.exports = config => {
         appId : config.appId,
         measurementId : config.measurementId,
     }
-/*
-    const address = config.address
-    const trainId = config.trainId
-    const textFile = config.textFile
-*/
-    const textFie = config.textFile
+    const appName = config.appName
 
     let firebaseClient = {};
-    if (!firebase.apps.find(el => el.name_ == config.appName)) {
-        firebaseClient = firebase.initializeApp(firebaseConfig, config.appName)
-        console.log(`${config.appName} Firebase initialized.`)
+    if (!firebase.apps.find(el => el.name_ == appName)) {
+        firebaseClient = firebase.initializeApp(firebaseConfig, appName)
+        console.log(`${appName} Firebase initialized.`)
     } else {
-        firebaseClient = firebase.app(config.appName)
+        firebaseClient = firebase.app(appName)
     }
-
-    let path = config.path;
 
     return {
         /*
-        *  @param options.dispatch
-        *  @param options.dispatchType  
-        *  @param options.afterUploaded     async function
+        *  @param file                      File or blob object to be uploaded
+        *  @param options.path              relative path for a file to be uploaded
+        *  @param options.fileName          file name to be set 
+        *  @param options.dispatch          function to dispatch events during this process 
+        *  @param options.dispatchType      type defining progress of uploading a file
+        *  @param options.afterUploaded     async function to execute 
         */
-        upload (path, filename, options) {
+        upload (file, options) {
             const textFile = options.textFile
-            //const fileName = textFile.name
-/*
             const dispatch = options.dispatch
             const dispatchType = options.dispatchType
             const afterUploaded = options.afterUploaded
-*/
+            const relativePath = path.nomalize(`${options.path}/`)
+            const fileName = options.fileName
 
-            // ex. path from gpt2Firebase : trainData/${address}/${trainId}/${fieName}
-            /*
-            const ref = firebaseClient.storage().ref(`${path}/${fileName}`)
+            const ref = firebaseClient.storage().ref(`${relativePath}${fileName}`)
             const uploadTask = ref.put(textFile)
-            */
-            
-            const ref = firebaseClient.storage().ref()
-            const childRef = ref.child('text4.txt')
 
-            /*
-            childRef.put(textFile).then(function(snapshot) {
-                console.log('Uploaded a file!');
-              })
-            */
-
-            //var bytes = new Uint8Array([0x48, 0x65, 0x6c, 0x6c, 0x6f, 0x2c, 0x20, 0x77, 0x6f, 0x72, 0x6c, 0x64, 0x21]);
-            childRef.put(textFile).then(function(snapshot) {
-              console.log('Uploaded an array!');
-              return
-            }); 
-
-            /*
             uploadTask.on('state_changed', (snapshot) => {
-
                 let progress = parseInt((snapshot.bytesTransferred / snapshot.totalBytes) * 100)
-                
                 dispatch({
                     type : dispatchType,
                     data: {
                         progress
                     }
                 })
-                
-               console.log('Upload is ' + progress + '% done');
             })
-            */
-            
-            
-/*
+
             try {
                 return await uploadTask.then(afterUploaded)
             } catch (e) {
                 console.error(e)
             }
-*/
         },
+
         /* download file on Firebase storage.
-        *  @param storagePath Firebase storage path.
-        *  @param options.destPath local path.
+        *  @param storagePath           Firebase storage path.
+        *  @param options.destPath      local path to be downloaded.
         */
         async download (storagePath, options) {
 

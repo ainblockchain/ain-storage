@@ -1,16 +1,3 @@
-/*
-//import axios from 'axios';
-const axios = require('axios');
-
-module.exports = {
-    getGitUser(user) {
-      return axios
-       .get(`https://api.github.com/users/${user}`)
-       .then((result) => result.data)
-       .catch((err) => console.err(err));
-      }
-   };
-*/
 const adapter_interface = require('./adapter_interface')
 const wallet = require('./wallet')
 
@@ -23,15 +10,15 @@ module.exports = config => {
   }
 
   config = Object.assign({}, defaults, config);
-
   const adapter_client = adapter_interface.create(config.adapter)
 
   return {
-    uploadFile(path, filename, options) {
-      apdater_client.upload(path, file, access).then()
+    
+    uploadFile(file, options)
+      apdater_client.upload(file, options).then()
     },
-    downloadFile(name, options) {
-      adapter_client.download(path).then( data => {
+    downloadFile(path, options) {
+      adapter_client.download(path, options).then( data => {
 
       })
     },

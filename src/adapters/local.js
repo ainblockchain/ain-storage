@@ -11,14 +11,19 @@ module.exports = config => {
     }
 
     return {
-        upload (path, filename, options) {
+        /*
+        *  @param file                  name of a file to be uploaded
+        *  @param options.path          relative path for the file to storagePath 
+        */
+        upload (file, options) {
+            const path = path.nomalize(`${options.path}/`)
+
             return new Promise((resolve, reject) => {
-                // name, data, options
-                let data = fs.createReadStream(`${normalizedPath}${path}/${filename}`);   // supposed 'ReadStream'
+                let data = fs.createReadStream(`${normalizedPath}${path}${filename}`);
 
                 let target
                 if (options.target === '') {
-                    target = Math.random().toString().substr(2, 8); // temporary Random
+                    target = Math.random().toString().substr(2, 8); // temporary Random string
                 } else {
                     target = options.target
                 }
@@ -36,6 +41,9 @@ module.exports = config => {
                 data.pipe(writeStream)
             })
         },
+        /*
+        *  @param  name         file name to be read
+        */
         download (name, options) {
             return new Promise((resolve, reject) => {
                 let stream = fs.createReadStream(`${normalizedPath}${name}`)
