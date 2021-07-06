@@ -25,6 +25,8 @@
   "dependencies": {
     "axios": "^0.21.1",
     "firebase": "^8.6.8",
-    "lodash": "^4.17.21"
+    "firebase-admin": "^9.10.0",
+    "lodash": "^4.17.21",
+    "xhr2": "^0.2.1"
   }
 }
