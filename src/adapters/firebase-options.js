@@ -1,11 +1,12 @@
 const filter = require('filter-object')
 const Firebase = require('./firebase')
 const assertParam = require('../utils/assert-param')
+const path = require('path')
  
 module.exports = (defaultOptions, options) =>  {
     const opts = Object.assign({}, defaultOptions, options)
 
-    const firebaseKeys = [
+    const firebaseKeys = [  // from firebase sdk
         'apiKey',
         'authDomain',
         'projectId',
@@ -13,17 +14,17 @@ module.exports = (defaultOptions, options) =>  {
         'messagingSenderId',
         'appId',
         'measurementId' ,
-        'appName',      // is it necessary?!
     ]
-
-    const firebaseOpts = filter(opts, firebaseKeys)
-    const firebaseAdapter = opts.firebase || module.exports.FirebaseAdapter(firebaseOpts)
 
     // storage Reference Path
     if (opts.validate !== false) {
         assertParam(opts, 'path')
+        opts.path = path.normalize(opts.path)
     }
 
-    // file?!..
+    const contextKeys = ['appName'].concat(firebaseKeys)
+    const context = Object.assign({
+                    }, filter(opts, contextKeys))
+
+    return Object.assign({}, {context})
 }
-module.exports.FirebaseAdapter = FirebaseAdapter

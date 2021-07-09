@@ -4,8 +4,11 @@ const fs = require('fs')
 const { expect } = require('chai')
 const axios = require('axios')
 const nock = require('nock')
+
+//== Temporary variables and functions for testing ==//
 const response = require('./private/mock-response')
 const test_dispatchType = "SET_PROGRESS"
+
 function test_dispatch(messages) {
     console.log(messages)
 }
@@ -17,6 +20,7 @@ function sendSignedTx(snapshot) {
         .then((result) => result.data)
         .catch((err) => console.log(err))
 }
+//===//
 
 describe('firebase adapter', () => {
 
@@ -69,15 +73,11 @@ describe('firebase adapter', () => {
             const config = require('./private/firebase_config')
             const client = adapter(config)
 
-            // destpath : "."
             const options = {
                 destPath : './down_text5.txt',
             }
             await client.download('temp/text5.txt', options)
-            .then((data) => {console.log('download succeed')})
-            .catch((err) => {console.log(err)})
-
-            //setTimeout(()=>{},5000)
+            console.log('download success')
         })
 
         

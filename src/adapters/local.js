@@ -6,57 +6,38 @@ module.exports = config => {
     let storagePath = config.path;
     let normalizedPath = path.normalize(`${storagePath}/`)
 
-    let options = {
-        // ContentType : 'image/png'
-    }
-
     return {
-        /*
-        *  @param file                  name of a file to be uploaded
-        *  @param options.path          relative path for the file to storagePath 
-        */
+        /** 
+         * copy data into a file on local
+         * @param file                  byte array to be saved in a file
+         * @param options.path          relative path for the file to storagePath 
+         * @param options.filename      name of a file to be saved
+         */
         upload (file, options) {
-            const path = path.nomalize(`${options.path}/`)
+            console.log(options)
 
-            return new Promise((resolve, reject) => {
-                let data = fs.createReadStream(`${normalizedPath}${path}${filename}`);
-
-                let target
-                if (options.target === '') {
-                    target = Math.random().toString().substr(2, 8); // temporary Random string
-                } else {
-                    target = options.target
-                }
-                const response = {
-                    key : target,
-                    ContentType : options.ContentType
-                }
-
-                const writeStream = fs.createWriteStream(`${normalizedPath}${target}`)
-                writeStream.on('error', err => reject(err))
-                writeStream.on('finish', () => {
-                    resolve(response)
-                })
-                // file copy
-                data.pipe(writeStream)
+            const localpath = path.normalize(`${options.path}/`)
+            const filename = options.filename
+            
+            fs.writeFileSync(`${normalizedPath}${localpath}${filename}`, file, (err) => {
+                if (err) throw err
+                console.log('Uploaded.')
             })
+
         },
-        /*
-        *  @param  name         file name to be read
-        */
-        download (name, options) {
-            return new Promise((resolve, reject) => {
-                let stream = fs.createReadStream(`${normalizedPath}${name}`)
-                switch(options.type) {
-                    case 'buffer' :
-                        let data = Buffer.from('')
-                        stream.on('data', chunk=>{data = Buffer.concat([data,chunk]) })
-                        stream.on('end', () => resolve(data))
-                        stream.on('error', err => reject(err))
-                        break
-                    default :
-                        return resolve(stream)
-                }
+
+        /** 
+         * copy data into a file on local
+         * @param storagePath           file path to be read
+         * @param options.destPath      local path to be downloaded/saved
+         */
+        download (storagePath, options) {
+            const data = fs.readFileSync(`${normalizedPath}${storagePath}`)
+            const destPath = options.destPath
+
+            fs.writeFileSync(`${normalizedPath}${destPath}`, data, (err) => {
+                if (err) throw err
+                console.log('Downloaded.')
             })
         }
     }

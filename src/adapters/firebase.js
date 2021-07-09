@@ -2,42 +2,35 @@ const fs = require('fs')
 const https = require('https')
 const firebase = require('firebase/app')
 require('firebase/storage')
-global.XMLHttpRequest = require("xhr2");
+global.XMLHttpRequest = require("xhr2")
 const path = require('path')
 
 const assertParam = require('../utils/assert-param')
+const resolve = require('./firebase-options');
+const { apiKey } = require('../../test/private/firebase_config');
 
 module.exports = config => {
-
-    const firebaseConfig = {
-        apiKey : config.apiKey,
-        authDomain : config.authDomain,
-        databaseURL : config.databaseURL,
-        projectId : config.projectId,
-        storageBucket : config.storageBucket,
-        messagingSenderId : config.messagingSenderId,
-        appId : config.appId,
-        measurementId : config.measurementId,
-    }
-    const appName = config.appName
+    const {context} = resolve(Object.assign(config, {validate:false}))
+    const appName = context.appName
 
     let firebaseClient = {};
     if (!firebase.apps.find(el => el.name_ == appName)) {
-        firebaseClient = firebase.initializeApp(firebaseConfig, appName)
+        firebaseClient = firebase.initializeApp(context, appName)
         console.log(`${appName} Firebase initialized.`)
     } else {
         firebaseClient = firebase.app(appName)
     }
 
     return {
-        /*
-        *  @param file                      File or blob object to be uploaded
-        *  @param options.path              relative path for a file to be uploaded
-        *  @param options.fileName          file name to be set 
-        *  @param options.dispatch          function to dispatch events during this process 
-        *  @param options.dispatchType      type defining progress of uploading a file
-        *  @param options.afterUploaded     async function to execute 
-        */
+        /** 
+         * upload file on Firebase storage.
+         * @param file                      File or blob object to be uploaded
+         * @param options.path              relative path for a file to be uploaded
+         * @param options.fileName          file name to be set 
+         * @param options.dispatch          function to dispatch events during this process 
+         * @param options.dispatchType      type defining progress of uploading a file
+         * @param options.afterUploaded     async function to execute 
+         */
         upload (file, options) {
             assertParam(options, "fileName")  // unless there's no file.filename
             
@@ -47,15 +40,6 @@ module.exports = config => {
                 afterUploaded,
                 fileName
             } = options
-            
-
-            /*
-            const textFile = options.textFile
-            const dispatch = options.dispatch
-            const dispatchType = options.dispatchType
-            const afterUploaded = options.afterUploaded
-            const fileName = options.fileName
-            */
 
             const relativePath = path.normalize(`${options.path}/`)
 
@@ -76,7 +60,8 @@ module.exports = config => {
             if (afterUploaded !== undefined) {
                 try {
                     return uploadTask.then(async (snapshot) => {
-                        await afterUploaded(snapshot).then(
+                        await afterUploaded(snapshot)
+                        .then(
                             console.log('Upload process is done.')
                         )
                     })
@@ -84,27 +69,14 @@ module.exports = config => {
                     console.error(e)
                 }
             }
-/*
-try {
-    return await uploadTask.then(async (snapshot) => {
-        const timestamp = Date.now();
-        const txBody = buildTrainRequestTxBody(address, trainId, fileName, timestamp, modelType, ainizeUid, ainizeMail, epochs);
-        const { signedTx } = signTx(txBody, privateKey);
-        const { result, ...rest } = await gpt2Firebase.functions()
-            .httpsCallable('sendSignedTransaction')(signedTx);
-    });
-} catch (e) {
-    console.error(e)
-}
-*/ 
-
         },
 
 
-        /* download file on Firebase storage.
-        *  @param storagePath           Firebase storage path.
-        *  @param options.destPath      local path to be downloaded.
-        */
+        /** 
+         * download file on Firebase storage.
+         * @param storagePath           Firebase storage path.
+         * @param options.destPath      local path to be downloaded.
+         */
         async download (storagePath, options) {
 
             const destPath = options.destPath

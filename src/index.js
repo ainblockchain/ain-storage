@@ -1,7 +1,6 @@
 const adapter_interface = require('./adapter_interface')
 const wallet = require('./wallet')
 
-
 module.exports = config => {
   const defaults = {
     adapter : {

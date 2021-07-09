@@ -23,6 +23,7 @@ function fromPrivateKey(privateKey) {
 function sign(data) {
     return ainUtil.ecSignMessage(data, Buffer.from(this.privateKey, 'hex'))
 }
+
 /**
  * Verify if the signature is valid and was signed by the address
  * @param {any} data 
@@ -32,6 +33,7 @@ function sign(data) {
 function verifySignature(data, signature) {
     return ainUtil.ecVerifySig(data, signature, this.address)
 }
+
 /**
  * Set private key for this module with address and public key derived from it
  * @param {String} privateKey 
