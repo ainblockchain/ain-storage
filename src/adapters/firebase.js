@@ -5,6 +5,8 @@ require('firebase/storage')
 global.XMLHttpRequest = require("xhr2");
 const path = require('path')
 
+const assertParam = require('../utils/assert-param')
+
 module.exports = config => {
 
     const firebaseConfig = {
@@ -37,32 +39,67 @@ module.exports = config => {
         *  @param options.afterUploaded     async function to execute 
         */
         upload (file, options) {
+            assertParam(options, "fileName")  // unless there's no file.filename
+            
+            const {
+                dispatch,
+                dispatchType,
+                afterUploaded,
+                fileName
+            } = options
+            
+
+            /*
             const textFile = options.textFile
             const dispatch = options.dispatch
             const dispatchType = options.dispatchType
             const afterUploaded = options.afterUploaded
-            const relativePath = path.nomalize(`${options.path}/`)
             const fileName = options.fileName
+            */
+
+            const relativePath = path.normalize(`${options.path}/`)
 
             const ref = firebaseClient.storage().ref(`${relativePath}${fileName}`)
-            const uploadTask = ref.put(textFile)
+            const uploadTask = ref.put(file)
 
-            uploadTask.on('state_changed', (snapshot) => {
-                let progress = parseInt((snapshot.bytesTransferred / snapshot.totalBytes) * 100)
-                dispatch({
-                    type : dispatchType,
-                    data: {
-                        progress
-                    }
+            if (dispatch !== undefined && dispatchType !== undefined)
+                uploadTask.on('state_changed', (snapshot) => {
+                    let progress = parseInt((snapshot.bytesTransferred / snapshot.totalBytes) * 100)
+                    dispatch({
+                        type : dispatchType,
+                        data: {
+                            progress
+                        }
+                    })
                 })
-            })
-
-            try {
-                return await uploadTask.then(afterUploaded)
-            } catch (e) {
-                console.error(e)
+            
+            if (afterUploaded !== undefined) {
+                try {
+                    return uploadTask.then(async (snapshot) => {
+                        await afterUploaded(snapshot).then(
+                            console.log('Upload process is done.')
+                        )
+                    })
+                } catch (e) {
+                    console.error(e)
+                }
             }
+/*
+try {
+    return await uploadTask.then(async (snapshot) => {
+        const timestamp = Date.now();
+        const txBody = buildTrainRequestTxBody(address, trainId, fileName, timestamp, modelType, ainizeUid, ainizeMail, epochs);
+        const { signedTx } = signTx(txBody, privateKey);
+        const { result, ...rest } = await gpt2Firebase.functions()
+            .httpsCallable('sendSignedTransaction')(signedTx);
+    });
+} catch (e) {
+    console.error(e)
+}
+*/ 
+
         },
+
 
         /* download file on Firebase storage.
         *  @param storagePath           Firebase storage path.
