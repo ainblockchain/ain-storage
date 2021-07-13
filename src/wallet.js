@@ -6,13 +6,13 @@ const ainUtil = require('@ainblockchain/ain-util')
  * @return {Strings} address, private_key, public_key 
  */
 function fromPrivateKey(privateKey) {
-    let buf_privateKey = Buffer.from(privateKey)
-    let publicKey = ainUtil.privateToPublic(buf_privateKey)
-    return {
-        address : ainUtil.toChecksumAddress(ainUtil.bufferToHex(ainUtil.pubToAddress(publicKey))),
-        privateKey : buf_privateKey.toString('hex'),
-        publicKey : publicKey.toString('hex')
-    }
+  let buf_privateKey = Buffer.from(privateKey)
+  let publicKey = ainUtil.privateToPublic(buf_privateKey)
+  return {
+    address: ainUtil.toChecksumAddress(ainUtil.bufferToHex(ainUtil.pubToAddress(publicKey))),
+    privateKey: buf_privateKey.toString('hex'),
+    publicKey: publicKey.toString('hex')
+  };
 }
 
 /**
@@ -21,7 +21,7 @@ function fromPrivateKey(privateKey) {
  * @return {String} signature
  */
 function sign(data) {
-    return ainUtil.ecSignMessage(data, Buffer.from(this.privateKey, 'hex'))
+  return ainUtil.ecSignMessage(data, Buffer.from(this.privateKey, 'hex'));
 }
 
 /**
@@ -31,7 +31,7 @@ function sign(data) {
  * @return {boolean} valid or not
  */
 function verifySignature(data, signature) {
-    return ainUtil.ecVerifySig(data, signature, this.address)
+  return ainUtil.ecVerifySig(data, signature, this.address);
 }
 
 /**
@@ -39,13 +39,13 @@ function verifySignature(data, signature) {
  * @param {String} privateKey 
  */
 function setKey(privateKey) {
-    let {rAddress, rPrivateKey, rPublicKey} = fromPrivateKey(privateKey)
-    this.address = rAddress
-    this.privateKey = rPrivateKey
-    this.publicKey = rPublicKey
-    console.log(rAddress)
+  let {rAddress, rPrivateKey, rPublicKey} = fromPrivateKey(privateKey)
+  this.address = rAddress
+  this.privateKey = rPrivateKey
+  this.publicKey = rPublicKey
+  console.log(rAddress)
 }
 
 module.exports = { 
-    setKey , sign, verifySignature,
+  setKey , sign, verifySignature,
 }

@@ -3,9 +3,9 @@ const wallet = require('./wallet')
 
 module.exports = config => {
   const defaults = {
-    adapter : {
-      provider : 'local',
-      path : process.cwd(),
+    adapter: {
+      provider: 'local',
+      path: process.cwd(),
     }
   }
 
@@ -24,7 +24,5 @@ module.exports = config => {
     setKey(privateKey) {
       wallet.setKey(privateKey)
     }
-  }
+  };
 }
-
-
