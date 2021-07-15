@@ -19,7 +19,7 @@ module.exports = config => {
       const localpath = path.normalize(`${options.path}/`)
       const filename = options.filename
       
-      fs.writeFileSync(`${normalizedPath}${localpath}${filename}`, file, (err)=>{
+      fs.writeFileSync(`${normalizedPath}${localpath}${filename}`, file, (err) => {
         if (err) throw err
         console.log('Uploaded.')
       })
@@ -34,7 +34,7 @@ module.exports = config => {
     const data = fs.readFileSync(`${normalizedPath}${storagePath}`)
       const destPath = options.destPath
 
-      fs.writeFileSync(`${normalizedPath}${destPath}`, data, (err)=>{
+      fs.writeFileSync(`${normalizedPath}${destPath}`, data, (err) => {
         if (err) throw err
         console.log('Downloaded.')
       })

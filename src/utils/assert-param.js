@@ -1,4 +1,4 @@
-module.exports = (opts, param)=>{
+module.exports = (opts, param) => {
   if (!opts || !(param in opts)) {
     throw new Error(`missing required param "${param}"`)
   }

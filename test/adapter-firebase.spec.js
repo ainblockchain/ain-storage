@@ -17,47 +17,46 @@ function sendSignedTx(snapshot) {
   console.log('sendSignedTx..')
   return axios
     .get(`https://api.ainetwork.ai/storage/sendSignedTx`)
-    .then((result)=>result.data)
-    .catch((err)=>console.log(err));
+    .then((result) => result.data)
+    .catch((err) => console.log(err));
 }
 
-describe('firebase adapter', ()=>{
+describe('firebase adapter', () => {
 
-  beforeEach (()=>{
+  beforeEach (() => {
     nock('https://api.ainetwork.ai')
     .get('/storage/sendSignedTx')
     .reply(200, response )
   })
 
-  describe('http mocking test', ()=>{
-    it('It should work properly', ()=>{
+  describe('http mocking test', () => {
+    it('It should work properly', () => {
       return sendSignedTx('premalk')
-      .then(response=>{
+      .then(response => {
         expect(typeof response).to.equal('object')
         expect(response.login).to.equal('premalk')
       });
     })
   })
   
-  describe('uploading a file', ()=>{
+  describe('uploading a file', () => {
     
-    beforeEach(()=>{
+    beforeEach(() => {
       execSync(`rm -rf ${__dirname}/firebase`)
       execSync(`mkdir ${__dirname}/firebase`)
       execSync(`echo 'testfile' > ${__dirname}/firebase/test.txt`)
     })
 
-    afterEach(()=>{
+    afterEach(() => {
       execSync(`rm -rf ${__dirname}/firebase`)
     })
 
-    it('upload should sucessfully upload a file', ()=>{
+    it('upload should sucessfully upload a file', () => {
 
       const config = require('./private/firebase_config')
       const client = adapter(config)
       const textFile = fs.readFileSync(`${__dirname}/firebase/test.txt`)
-      // path
-      // dispatch, dispatchType, afterUpload, fileName
+      
       const options = {
         path: "temp",
         fileName: "text5.txt", 
@@ -68,7 +67,7 @@ describe('firebase adapter', ()=>{
       client.upload(textFile, options)
     })
 
-    it('download should successfully download a file', async ()=>{
+    it('download should successfully download a file', async () => {
       const config = require('./private/firebase_config')
       const client = adapter(config)
 
@@ -78,8 +77,5 @@ describe('firebase adapter', ()=>{
       await client.download('temp/text5.txt', options)
       console.log('download success')
     })
-
-    
   })
-  
 })

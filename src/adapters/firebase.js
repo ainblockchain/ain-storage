@@ -43,7 +43,6 @@ module.exports = config => {
       } = options
 
       const relativePath = path.normalize(`${options.path}/`)
-
       const ref = firebaseClient.storage().ref(`${relativePath}${fileName}`)
       const uploadTask = ref.put(file)
 
@@ -83,22 +82,22 @@ module.exports = config => {
       const url = await firebaseClient.storage().ref(storagePath).getDownloadURL()
       const file = fs.createWriteStream(destPath)
 
-      return new Promise((resolve, reject)=>{
-        const request =  https.get(url, (response)=>{
+      return new Promise((resolve, reject) => {
+        const request =  https.get(url, (response) => {
           if (response.statusCode !== 200) {
             reject(new Error('Failed to request'))
           }
           response.pipe(file)
-          file.on('finish', ()=>{
+          file.on('finish', () => {
             file.close()
             resolve('')
           })
-          file.on('error', (err)=>{
-            fs.unlink(destPath, ()=>{})
+          file.on('error', (err) => {
+            fs.unlink(destPath, () => {})
           })
         })
-        request.on('error', (err)=>{
-          fs.unlink(destPath, ()=>{})
+        request.on('error', (err) => {
+          fs.unlink(destPath, () => {})
           reject(err)
         })
       })

@@ -2,17 +2,16 @@ const wallet = require('../src/wallet')
 const ainUtil = require('@ainblockchain/ain-util')
 const { expect } = require('chai')
 
-
-describe('wallet', ()=>{
+describe('wallet', () => {
   let account1, account2
-  describe('sign and verify data', ()=>{
+  describe('sign and verify data', () => {
 
-    beforeEach(()=>{
+    beforeEach(() => {
       account1 = ainUtil.createAccount('qwer')
       account2 = ainUtil.createAccount('asdf')
     })
 
-    it('A signature should be successfully verified.', ()=>{
+    it('A signature should be successfully verified.', () => {
       wallet.setKey(account1.private_key)
       const testdata = '0x1234567890'
       expect(wallet.verifySignature(testdata, wallet.sign(testdata)), true)
