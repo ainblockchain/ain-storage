@@ -3,19 +3,19 @@ const adapter = require('../src/adapters/local')
 const {execSync} = require('child_process')
 const fs = require('fs')
 
-describe('local adapter', () => {
-  describe('uploading a file', () => {
-    beforeEach(() => {
+describe('local adapter', ()=>{
+  describe('uploading a file', ()=>{
+    beforeEach(()=>{
       execSync(`rm -rf ${__dirname}/local`)
       execSync(`mkdir ${__dirname}/local`)
       execSync(`echo 'testfile' > ${__dirname}/local/test.txt`)    // make a temporary file
     })
 
-    afterEach(() => {
+    afterEach(()=>{
       execSync(`rm -rf ${__dirname}/local`)
     })
 
-    it('upload should sucessfully upload a file', async() => {
+    it('upload should sucessfully upload a file', async()=>{
       const config = {provider:'local', path:`${__dirname}/local`}
       const client = adapter(config)
 
@@ -30,12 +30,12 @@ describe('local adapter', () => {
       expect(testfile).to.equal('testfile\n')
     })
 
-    it('download should successfully download a file', () => {
+    it('download should successfully download a file', ()=>{
       const config = {provider:'local', path:`${__dirname}/local`}
       const client = adapter(config)
 
       const options = {
-        destPath : 'test_download.txt'
+        destPath: 'test_download.txt'
       }
       client.download('test.txt', options)
       

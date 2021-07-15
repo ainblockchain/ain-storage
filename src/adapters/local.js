@@ -13,17 +13,16 @@ module.exports = config => {
      * @param options.path      relative path for the file to storagePath 
      * @param options.filename    name of a file to be saved
      */
-    upload (file, options) {
+    upload(file, options) {
       console.log(options)
 
       const localpath = path.normalize(`${options.path}/`)
       const filename = options.filename
       
-      fs.writeFileSync(`${normalizedPath}${localpath}${filename}`, file, (err) => {
+      fs.writeFileSync(`${normalizedPath}${localpath}${filename}`, file, (err)=>{
         if (err) throw err
         console.log('Uploaded.')
       })
-
     },
 
     /** 
@@ -31,11 +30,11 @@ module.exports = config => {
      * @param storagePath     file path to be read
      * @param options.destPath  local path to be downloaded/saved
      */
-    download (storagePath, options) {
+    download(storagePath, options) {
     const data = fs.readFileSync(`${normalizedPath}${storagePath}`)
       const destPath = options.destPath
 
-      fs.writeFileSync(`${normalizedPath}${destPath}`, data, (err) => {
+      fs.writeFileSync(`${normalizedPath}${destPath}`, data, (err)=>{
         if (err) throw err
         console.log('Downloaded.')
       })

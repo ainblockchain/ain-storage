@@ -3,7 +3,7 @@ const Firebase = require('./firebase')
 const assertParam = require('../utils/assert-param')
 const path = require('path')
  
-module.exports = (defaultOptions, options) =>  {
+module.exports = (defaultOptions, options)=>{
   const opts = Object.assign({}, defaultOptions, options)
 
   const firebaseKeys = [  // from firebase sdk

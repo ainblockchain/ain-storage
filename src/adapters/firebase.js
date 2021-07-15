@@ -11,7 +11,8 @@ const { apiKey } = require('../../test/private/firebase_config');
 
 module.exports = config => {
   const {context} = resolve(Object.assign(config, {validate:false}))
-  const appName = context.appName
+  let appName = context.appName
+  if (appName == undefined) appName = context.appId
 
   let firebaseClient = {};
   if (!firebase.apps.find(el => el.name_ == appName)) {
@@ -29,9 +30,9 @@ module.exports = config => {
      * @param options.fileName      file name to be set 
      * @param options.dispatch      function to dispatch events during this process 
      * @param options.dispatchType    type defining progress of uploading a file
-     * @param options.afterUploaded   async function to execute 
+     * @param options.afterUploaded   async function to execute  when uploading is done
      */
-    upload (file, options) {
+    upload(file, options) {
       assertParam(options, "fileName")  // unless there's no file.filename
       
       const {
@@ -71,39 +72,36 @@ module.exports = config => {
       }
     },
 
-
     /** 
      * download file on Firebase storage.
      * @param storagePath       Firebase storage path.
      * @param options.destPath    local path to be downloaded.
      */
-    async download (storagePath, options) {
-
+    async download(storagePath, options) {
       const destPath = options.destPath
 
       const url = await firebaseClient.storage().ref(storagePath).getDownloadURL()
       const file = fs.createWriteStream(destPath)
 
-      return new Promise ((resolve, reject) => {
-        const request =  https.get(url, (response) => {
+      return new Promise((resolve, reject)=>{
+        const request =  https.get(url, (response)=>{
           if (response.statusCode !== 200) {
             reject(new Error('Failed to request'))
           }
           response.pipe(file)
-          file.on('finish', () => {
+          file.on('finish', ()=>{
             file.close()
             resolve('')
           })
-          file.on('error', (err) => {
-            fs.unlink(destPath, () => {})
+          file.on('error', (err)=>{
+            fs.unlink(destPath, ()=>{})
           })
         })
-        request.on('error', (err) => {
-          fs.unlink(destPath, () => {})
+        request.on('error', (err)=>{
+          fs.unlink(destPath, ()=>{})
           reject(err)
         })
       })
-
     }
   };
 }
