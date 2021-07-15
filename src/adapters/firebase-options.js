@@ -24,6 +24,5 @@ module.exports = (defaultOptions, options) => {
 
   const contextKeys = ['appName'].concat(firebaseKeys)
   const context = Object.assign({ }, filter(opts, contextKeys))
-
   return Object.assign({}, {context});
 }

@@ -24,7 +24,6 @@ module.exports = config => {
         console.log('Uploaded.')
       })
     },
-
     /** 
      * copy data into a file on local
      * @param storagePath     file path to be read

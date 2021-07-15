@@ -78,10 +78,8 @@ module.exports = config => {
      */
     async download(storagePath, options) {
       const destPath = options.destPath
-
       const url = await firebaseClient.storage().ref(storagePath).getDownloadURL()
       const file = fs.createWriteStream(destPath)
-
       return new Promise((resolve, reject) => {
         const request =  https.get(url, (response) => {
           if (response.statusCode !== 200) {
