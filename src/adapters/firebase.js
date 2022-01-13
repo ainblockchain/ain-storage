@@ -44,6 +44,12 @@ module.exports = config => {
 
       const relativePath = path.normalize(`${options.path}/`)
       const ref = firebaseClient.storage().ref(`${relativePath}${fileName}`)
+
+      if (options.doEncrypt) {
+        const { encryptionInfo } = options
+        file = await encrypter.encrypt(file, encryptionInfo.secretKey, encryptionInfo.g1PublicKey)
+      }
+
       const uploadTask = ref.put(file)
 
       if (dispatch !== undefined && dispatchType !== undefined)
