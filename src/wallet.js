@@ -1,4 +1,14 @@
-const ainUtil = require('@ainblockchain/ain-util')
+const ainUtil = require('@ainblockchain/ain-util');
+const PRE = require('./lib/afgh_pre')
+const mcl = require('mcl-wasm')
+const eccrypto = require('eccrypto')
+
+// console.log(mcl)
+// a = mcl.Fr()
+// console.log(a)
+// const preInitiatedParams = (async () => {
+//   return await PRE.init({g: "a", h: "b", returnHex: true})
+// })()
 
 /**
  * Derive an account(address,public key) from a private key
@@ -38,14 +48,36 @@ function verifySignature(data, signature) {
  * Set private key for this module with address and public key derived from it
  * @param {String} privateKey 
  */
-function setKey(privateKey) {
+async function setKey(privateKey) {
   let {rAddress, rPrivateKey, rPublicKey} = fromPrivateKey(privateKey)
   this.address = rAddress
   this.privateKey = rPrivateKey
   this.publicKey = rPublicKey
-  console.log(rAddress)
+}
+
+/**
+ * Set pre private key for this module with public key of g1 and g2 derived from it
+ * @param {String} privateKey 
+ */
+ async function setPreKey(privateKey) {
+  preInitiatedParams = await PRE.init({g: "a", h: "b", returnHex: true})
+
+  const fr = new mcl.Fr()
+  // privateKey = eccrypto.generatePrivate().toString()
+  // console.log(privateKey)
+  fr.setStr(privateKey, '16')
+
+  const preKey = {
+    privateKey: fr.serializeToHexStr()
+  }
+
+  preKey.g1PublicKey = PRE.getPkFromG1(preKey.privateKey, preInitiatedParams.g, {returnHex: true})
+  preKey.g2PublicKey = PRE.getPkFromG2(preKey.privateKey, preInitiatedParams.h, {returnHex: true})
+  preKey.g3PublicKey = eccrypto.getPublic(Buffer.from(preKey.privateKey, 'hex')).toString('hex')
+
+  return preKey
 }
 
 module.exports = { 
-  setKey , sign, verifySignature,
+  setKey, setPreKey, sign, verifySignature,
 }

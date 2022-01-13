@@ -11,9 +11,9 @@ describe('wallet', () => {
       account2 = ainUtil.createAccount('asdf')
     })
 
-    it('A signature should be successfully verified.', () => {
-      wallet.setKey(account1.private_key)
-      const testdata = '0x1234567890'
+    it('A signature should be successfully verified.', async () => {
+      await wallet.setKey(account1.private_key)
+      const testdata = Buffer.from('0x1234567890')
       expect(wallet.verifySignature(testdata, wallet.sign(testdata)), true)
     })
   })

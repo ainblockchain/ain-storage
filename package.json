@@ -25,12 +25,15 @@
   },
   "dependencies": {
     "@ainblockchain/ain-util": "^1.1.6",
+    "aes-256-gcm": "^1.0.3",
+    "app-root-path": "^3.0.0",
     "axios": "^0.21.1",
     "filter-object": "^3.0.0",
-    "firebase": "^8.6.8",
+    "firebase": "^8.10.0",
     "firebase-admin": "^9.10.0",
     "flush-promises": "^1.0.2",
     "lodash": "^4.17.21",
+    "mcl-wasm": "^0.8.0",
     "xhr2": "^0.2.1"
   }
 }
